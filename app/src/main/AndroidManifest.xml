@@ -29,6 +29,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.tawazz.spendee.SplashScreen" />
         </activity>
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".AddActivity"
+            android:label="@string/title_activity_add"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.tawazz.spendee.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
