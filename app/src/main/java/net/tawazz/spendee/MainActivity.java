@@ -13,34 +13,73 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import net.tawazz.spendee.adapters.MyFragmentPagerAdapter;
+import net.tawazz.spendee.fragments.DashBoardFragment;
+import net.tawazz.spendee.fragments.ExpFragment;
+import net.tawazz.spendee.fragments.IncFragment;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
+    private ArrayList<Fragment> fragmentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         TextView dateTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        dateTitle.setText("May/2016");
+        dateTitle.setText("June/2016");
         setSupportActionBar(toolbar);
 
         ActionBar appBar = getSupportActionBar();
         appBar.setDisplayShowTitleEnabled(false);
         fragmentManager = getSupportFragmentManager();
 
+        fragmentList = new ArrayList<>();
+
+        fragmentList.add(new ExpFragment());
+        fragmentList.add(new IncFragment());
+        fragmentList.add(new DashBoardFragment());
+
         assert viewPager != null;
         viewPager.setAdapter(new MyFragmentPagerAdapter(fragmentManager,
-                MainActivity.this));
+                MainActivity.this, fragmentList));
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                switch (position) {
+                    case 0:
+                        ExpFragment expFragment = (ExpFragment) fragmentList.get(position);
+                        expFragment.setText("Scrolled");
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 
@@ -55,14 +94,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void addFragment(Fragment fragment) {
-        fragmentManager
-                .beginTransaction()
-                .add(R.id.viewPager, fragment, fragment.getClass().getName())
-                .hide(fragment)
-                .commit();
-
-    }
 
 
 }

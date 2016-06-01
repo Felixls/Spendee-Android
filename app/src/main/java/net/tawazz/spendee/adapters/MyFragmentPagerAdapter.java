@@ -4,10 +4,6 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import net.tawazz.spendee.fragments.DashBoardFragment;
-import net.tawazz.spendee.fragments.ExpFragment;
-import net.tawazz.spendee.fragments.IncFragment;
-
 import java.util.ArrayList;
 
 public class MyFragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
@@ -15,14 +11,9 @@ public class MyFragmentPagerAdapter extends android.support.v4.app.FragmentPager
     private Context context;
     private ArrayList<Fragment> fragmentList;
 
-    public MyFragmentPagerAdapter(FragmentManager fm, Context context) {
+    public MyFragmentPagerAdapter(FragmentManager fm, Context context, ArrayList<Fragment> fragments) {
         super(fm);
-        fragmentList = new ArrayList<>();
-
-        fragmentList.add(new ExpFragment());
-        fragmentList.add(new IncFragment());
-        fragmentList.add(new DashBoardFragment());
-
+        fragmentList = fragments;
         this.context = context;
     }
 
