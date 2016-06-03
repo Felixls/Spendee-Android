@@ -8,14 +8,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
 
 import java.io.File;
+import java.text.NumberFormat;
 
 /**
  * Created by tawanda on 14/03/2016.
@@ -27,7 +34,7 @@ public class Util {
      * @param title   title of the alert
      * @param message message of the alert
      */
-    public static void Alert(Context context, String title, String message) {
+    public static void alert(Context context, String title, String message) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setMessage(message);
@@ -47,8 +54,9 @@ public class Util {
 
         return ProgressDialog.show(context, "", message, true);
     }
+
     /**
-     * @param dp dp to be conveted to px
+     * @param dp      dp to be conveted to px
      * @param context activity context
      * @return pixels of given dp
      */
@@ -78,23 +86,16 @@ public class Util {
     /**
      * Deletes a file at the specified URI
      *
-     * @param activity
-     *            the activity context that this is being called from
-     * @param uri
-     *            the URI to delete
+     * @param activity the activity context that this is being called from
+     * @param uri      the URI to delete
      */
-    public static boolean deleteFileAtUri(Activity activity, Uri uri)
-    {
+    public static boolean deleteFileAtUri(Activity activity, Uri uri) {
         boolean deleted = false;
-        if (uri != null)
-        {
-            try
-            {
+        if (uri != null) {
+            try {
                 activity.getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                         MediaStore.MediaColumns.DATA + "='" + uri.getPath() + "'", null);
-            }
-            catch (Throwable th)
-            {
+            } catch (Throwable th) {
                 // Do nothing file could be from gallery
             }
 
@@ -105,23 +106,21 @@ public class Util {
     }
 
     /**
-     *
-     * @param context launching context of the notification
+     * @param context      launching context of the notification
      * @param openingClass Activity to open when notification clicked
-     * @param icon notification icon
-     * @param title Title of the notification
-     * @param message notification content
+     * @param icon         notification icon
+     * @param title        Title of the notification
+     * @param message      notification content
      */
 
-    public static void displayNotification(Context context,Class openingClass, int icon ,String title, String message )
-    {
+    public static void displayNotification(Context context, Class openingClass, int icon, String title, String message) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(icon);
         mBuilder.setContentTitle(title).setContentText(message).setAutoCancel(true);
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, openingClass);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         // The stack builder object will contain an artificial back stack for
         // the
@@ -138,5 +137,55 @@ public class Util {
         NotificationManager mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, mBuilder.build());
+    }
+
+    public static void setCurrencyEditText(final EditText editText) {
+
+        editText.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(current)) {
+                    editText.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[$,.]", "");
+
+                    double parsed = Double.parseDouble(cleanString);
+                    String formatted = NumberFormat.getCurrencyInstance().format((parsed / 100));
+
+                    current = formatted;
+                    editText.setText(formatted);
+                    editText.setSelection(formatted.length());
+
+                    editText.addTextChangedListener(this);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    public static void setWindowColor(Activity activity, int color) {
+        Window window = activity.getWindow();
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(activity.getResources().getColor(color));
+        }
     }
 }
