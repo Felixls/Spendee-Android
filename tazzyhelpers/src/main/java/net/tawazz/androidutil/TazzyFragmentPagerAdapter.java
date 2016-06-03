@@ -1,4 +1,4 @@
-package net.tawazz.spendee.adapters;
+package net.tawazz.androidutil;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -6,15 +6,14 @@ import android.support.v4.app.FragmentManager;
 
 import java.util.ArrayList;
 
-public class MyFragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
-    private String tabTitles[] = new String[]{"Expenses", "Incomes", "Dashboard"};
-    private Context context;
+public class TazzyFragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
+    private ArrayList<String> tabTitles;
     private ArrayList<Fragment> fragmentList;
 
-    public MyFragmentPagerAdapter(FragmentManager fm, Context context, ArrayList<Fragment> fragments) {
+    public TazzyFragmentPagerAdapter(FragmentManager fm, ArrayList<String> titles, ArrayList<Fragment> fragments) {
         super(fm);
         fragmentList = fragments;
-        this.context = context;
+        tabTitles = titles;
     }
 
     @Override
@@ -30,7 +29,7 @@ public class MyFragmentPagerAdapter extends android.support.v4.app.FragmentPager
     @Override
     public CharSequence getPageTitle(int position) {
         // Generate title based on item position
-        return tabTitles[position];
+        return tabTitles.get(position);
     }
 
 }

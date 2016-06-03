@@ -12,17 +12,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import net.tawazz.spendee.adapters.MyFragmentPagerAdapter;
+import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
 import net.tawazz.spendee.fragments.DashBoardFragment;
 import net.tawazz.spendee.fragments.ExpFragment;
 import net.tawazz.spendee.fragments.IncFragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
     private ArrayList<Fragment> fragmentList;
+    private ArrayList<String> tabTitles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +48,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentList.add(new IncFragment());
         fragmentList.add(new DashBoardFragment());
 
+        tabTitles = new ArrayList<>(
+                Arrays.asList("Expenses","Incomes","Dashboard")
+        );
         assert viewPager != null;
-        viewPager.setAdapter(new MyFragmentPagerAdapter(fragmentManager,
-                MainActivity.this, fragmentList));
+        viewPager.setAdapter(new TazzyFragmentPagerAdapter(fragmentManager,tabTitles, fragmentList));
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
