@@ -22,6 +22,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <com.joanzapata.iconify.widget.IconTextView
+                android:id="@+id/prevDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -39,6 +40,7 @@
                 android:textSize="20dp" />
 
             <com.joanzapata.iconify.widget.IconTextView
+                android:id="@+id/nextDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="{fa-arrow-right}"

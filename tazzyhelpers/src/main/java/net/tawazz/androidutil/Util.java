@@ -188,4 +188,8 @@ public class Util {
             window.setStatusBarColor(activity.getResources().getColor(color));
         }
     }
+
+    public static boolean isset(Object value) {
+        return value != null;
+    }
 }
