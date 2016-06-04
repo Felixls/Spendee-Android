@@ -18,6 +18,8 @@ import android.widget.TextView;
 import com.joanzapata.iconify.widget.IconTextView;
 
 import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
+import net.tawazz.spendee.AppData.ExpItem;
+import net.tawazz.spendee.AppData.Items;
 import net.tawazz.spendee.fragments.DashBoardFragment;
 import net.tawazz.spendee.fragments.ExpFragment;
 import net.tawazz.spendee.fragments.IncFragment;
@@ -26,6 +28,7 @@ import net.tawazz.spendee.fragments.ViewsFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
+
     }
 
     @Override
@@ -98,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
         fragmentList.add(new DashBoardFragment());
 
         dateTitle.setText(generateDate(null, null, null));
+
+        expAmount.setText(dashAmount(1000));
+        incAmount.setText(dashAmount(800));
+        balAmount.setText(dashAmount(200));
 
         tabTitles = new ArrayList<>(
                 Arrays.asList("Expenses", "Incomes", "Dashboard")
@@ -187,14 +195,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateViews(int position) {
         // TODO update fragment views when fragment created
-
-        expAmount.setText(dashAmount(1000));
-        incAmount.setText(dashAmount(800));
-        balAmount.setText(dashAmount(200));
         switch (position) {
             case 0:
                 ExpFragment fragment = (ExpFragment) fragmentList.get(position);
-                fragment.setText(dates.get(0) + "/" + dates.get(1));
+                ArrayList<Items> items = new ArrayList<>();
+                ArrayList<String> tags = new ArrayList<>(Arrays.asList("food", "drink"));
+                items.add(new ExpItem("food", 12, tags, new Date()));
+                items.add(new ExpItem("mexican", 8, tags, new Date()));
+                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
+                items.add(new ExpItem("food", 12, tags, new Date()));
+                items.add(new ExpItem("mexican", 8, tags, new Date()));
+                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
+                items.add(new ExpItem("food", 12, tags, new Date()));
+                items.add(new ExpItem("mexican", 8, tags, new Date()));
+                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
+                fragment.setExpenses(items);
                 break;
             case 1:
                 break;
