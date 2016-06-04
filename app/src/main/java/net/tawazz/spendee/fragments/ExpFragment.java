@@ -2,7 +2,6 @@ package net.tawazz.spendee.fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +9,10 @@ import android.widget.TextView;
 
 import net.tawazz.spendee.R;
 
-public class ExpFragment extends Fragment {
+public class ExpFragment extends ViewsFragment {
     private TextView textView;
     private View view;
+
     public ExpFragment() {
         // Required empty public constructor
     }
@@ -27,6 +27,10 @@ public class ExpFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_exp, container, false);
         textView = (TextView) view.findViewById(R.id.textView);
+
+        if (onCreateViewCallback != null) {
+            this.onCreateViewCallback.onFragmentCreateView();
+        }
 
         return view;
     }

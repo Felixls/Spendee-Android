@@ -21,6 +21,7 @@ import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
 import net.tawazz.spendee.fragments.DashBoardFragment;
 import net.tawazz.spendee.fragments.ExpFragment;
 import net.tawazz.spendee.fragments.IncFragment;
+import net.tawazz.spendee.fragments.ViewsFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> tabTitles;
     private Toolbar toolbar;
     private ViewPager viewPager;
-    private TextView dateTitle;
+    private TextView dateTitle, expAmount, incAmount, balAmount;
     private FloatingActionButton addButton;
     private ArrayList<Integer> dates;
     private IconTextView nextDate, prevDate;
@@ -46,16 +47,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
 
-            switch (position) {
-                case 0:
-                    ExpFragment expFragment = (ExpFragment) fragmentList.get(position);
-                    expFragment.setText("Scrolled");
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-            }
+            updateViews(position);
         }
 
         @Override
@@ -90,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
         dateTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         nextDate = (IconTextView) toolbar.findViewById(R.id.nextDate);
         prevDate = (IconTextView) toolbar.findViewById(R.id.prevDate);
+        expAmount = (TextView) findViewById(R.id.expense_total_amount);
+        incAmount = (TextView) findViewById(R.id.income_total_amount);
+        balAmount = (TextView) findViewById(R.id.balance_amount);
 
         setSupportActionBar(toolbar);
         ActionBar appBar = getSupportActionBar();
@@ -171,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             cal.set(year, month - 1, 1);
         } else {
             year = cal.get(Calendar.YEAR);
-            month = cal.get(Calendar.MONTH);
+            month = cal.get(Calendar.MONTH) + 1;
             day = cal.get(Calendar.DATE);
 
         }
@@ -180,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
             dates.add(year);
             dates.add(month);
             dates.add(day);
+            setFragmentListeners(0);
         } else {
             dates.set(0, year);
             dates.set(1, month);
@@ -189,5 +185,36 @@ public class MainActivity extends AppCompatActivity {
         return months.get(cal.get(Calendar.MONTH)) + "/" + cal.get(Calendar.YEAR);
     }
 
+    private void updateViews(int position) {
+        // TODO update fragment views when fragment created
 
+        expAmount.setText(dashAmount(1000));
+        incAmount.setText(dashAmount(800));
+        balAmount.setText(dashAmount(200));
+        switch (position) {
+            case 0:
+                ExpFragment fragment = (ExpFragment) fragmentList.get(position);
+                fragment.setText(dates.get(0) + "/" + dates.get(1));
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+        }
+    }
+
+    public String dashAmount(double amount) {
+        return String.format(this.getText(R.string.dash_amnt).toString(), amount);
+    }
+
+    public void setFragmentListeners(final int pos) {
+        ViewsFragment.onCreateViewListener fragmentCreatedListener = new ViewsFragment.onCreateViewListener() {
+            @Override
+            public void onFragmentCreateView() {
+                updateViews(pos);
+            }
+        };
+
+        ((ViewsFragment) fragmentList.get(pos)).setOnCreateViewListener(fragmentCreatedListener);
+    }
 }
