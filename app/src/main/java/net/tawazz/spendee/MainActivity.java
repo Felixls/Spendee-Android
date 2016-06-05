@@ -15,92 +15,57 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.joanzapata.iconify.widget.IconTextView;
+
 import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
+import net.tawazz.spendee.AppData.ExpData;
+import net.tawazz.spendee.AppData.ExpItem;
+import net.tawazz.spendee.AppData.Items;
 import net.tawazz.spendee.fragments.DashBoardFragment;
 import net.tawazz.spendee.fragments.ExpFragment;
 import net.tawazz.spendee.fragments.IncFragment;
+import net.tawazz.spendee.fragments.ViewsFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
     private ArrayList<Fragment> fragmentList;
     private ArrayList<String> tabTitles;
+    private Toolbar toolbar;
+    private ViewPager viewPager;
+    private TextView dateTitle, expAmount, incAmount, balAmount;
+    private FloatingActionButton addButton;
+    private ArrayList<Integer> dates;
+    private IconTextView nextDate, prevDate;
+    private ViewPager.OnPageChangeListener navigation = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+
+            updateViews(position);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        TextView dateTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        dateTitle.setText("June/2016");
-        setSupportActionBar(toolbar);
-
-        ActionBar appBar = getSupportActionBar();
-        appBar.setDisplayShowTitleEnabled(false);
-        fragmentManager = getSupportFragmentManager();
-
-        fragmentList = new ArrayList<>();
-
-        fragmentList.add(new ExpFragment());
-        fragmentList.add(new IncFragment());
-        fragmentList.add(new DashBoardFragment());
-
-        tabTitles = new ArrayList<>(
-                Arrays.asList("Expenses","Incomes","Dashboard")
-        );
-        assert viewPager != null;
-        viewPager.setAdapter(new TazzyFragmentPagerAdapter(fragmentManager,tabTitles, fragmentList));
-
-        // Give the TabLayout the ViewPager
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setBackgroundResource(R.color.redAccent);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                switch (position) {
-                    case 0:
-                        ExpFragment expFragment = (ExpFragment) fragmentList.get(position);
-                        expFragment.setText("Scrolled");
-                        tabLayout.setBackgroundResource(R.color.redAccent);
-                        break;
-                    case 1:
-                        tabLayout.setBackgroundResource(R.color.greenAccent);
-                        break;
-                    case 2:
-                        tabLayout.setBackgroundResource(R.color.colorAccent);
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.fab);
-
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                startActivity(intent);
-            }
-        });
+        init();
 
     }
 
@@ -115,6 +80,156 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void init() {
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        addButton = (FloatingActionButton) findViewById(R.id.fab);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        dateTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        nextDate = (IconTextView) toolbar.findViewById(R.id.nextDate);
+        prevDate = (IconTextView) toolbar.findViewById(R.id.prevDate);
+        expAmount = (TextView) findViewById(R.id.expense_total_amount);
+        incAmount = (TextView) findViewById(R.id.income_total_amount);
+        balAmount = (TextView) findViewById(R.id.balance_amount);
 
+        setSupportActionBar(toolbar);
+        ActionBar appBar = getSupportActionBar();
+        appBar.setDisplayShowTitleEnabled(false);
 
+        fragmentManager = getSupportFragmentManager();
+        fragmentList = new ArrayList<>();
+
+        fragmentList.add(new ExpFragment());
+        fragmentList.add(new IncFragment());
+        fragmentList.add(new DashBoardFragment());
+
+        dateTitle.setText(generateDate(null, null, null));
+
+        expAmount.setText(dashAmount(1000));
+        incAmount.setText(dashAmount(800));
+        balAmount.setText(dashAmount(200));
+
+        tabTitles = new ArrayList<>(
+                Arrays.asList("Expenses", "Incomes", "Dashboard")
+        );
+
+        viewPager.setAdapter(new TazzyFragmentPagerAdapter(fragmentManager, tabTitles, fragmentList));
+
+        // Give the TabLayout the ViewPager
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setBackgroundResource(R.color.redAccent);
+
+        viewPager.addOnPageChangeListener(navigation);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        nextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dateTitle.setText(generateDate(dates.get(0), dates.get(1) + 1, null));
+            }
+        });
+
+        prevDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dateTitle.setText(generateDate(dates.get(0), dates.get(1) - 1, null));
+            }
+        });
+
+    }
+
+    private String generateDate(Integer year, Integer month, Integer day) {
+
+        Calendar cal = Calendar.getInstance();
+        ArrayList<String> months = new ArrayList<>(Arrays.asList(
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ));
+
+        if (year != null && month != null && day != null) {
+
+            if (month == 13) {
+                month = 1;
+                year += 1;
+            }
+            if (month == 0) {
+                month = 12;
+                year -= 1;
+            }
+            cal.set(year, month - 1, day);
+
+        } else if (year != null && month != null) {
+            if (month == 13) {
+                month = 1;
+                year += 1;
+            }
+            if (month == 0) {
+                month = 12;
+                year -= 1;
+            }
+            cal.set(year, month - 1, 1);
+        } else {
+            year = cal.get(Calendar.YEAR);
+            month = cal.get(Calendar.MONTH) + 1;
+            day = cal.get(Calendar.DATE);
+
+        }
+        if (dates == null) {
+            dates = new ArrayList<>();
+            dates.add(year);
+            dates.add(month);
+            dates.add(day);
+            setFragmentListeners(0);
+        } else {
+            dates.set(0, year);
+            dates.set(1, month);
+            dates.set(2, day);
+        }
+
+        return months.get(cal.get(Calendar.MONTH)) + "/" + cal.get(Calendar.YEAR);
+    }
+
+    private void updateViews(int position) {
+        // TODO update fragment views when fragment created
+        switch (position) {
+            case 0:
+                ExpFragment fragment = (ExpFragment) fragmentList.get(position);
+                ArrayList<Items> items = new ArrayList<>();
+                ArrayList<String> tags = new ArrayList<>(Arrays.asList("food", "drink"));
+                items.add(new ExpItem("food", 12, tags, new Date()));
+                items.add(new ExpItem("mexican", 8, tags, new Date()));
+                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
+
+                ArrayList<ExpData> data = new ArrayList<>();
+                data.add(new ExpData(new Date(),items));
+
+                fragment.setExpenses(data);
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+        }
+    }
+
+    public String dashAmount(double amount) {
+        return String.format(this.getText(R.string.dash_amnt).toString(), amount);
+    }
+
+    public void setFragmentListeners(final int pos) {
+        ViewsFragment.onCreateViewListener fragmentCreatedListener = new ViewsFragment.onCreateViewListener() {
+            @Override
+            public void onFragmentCreateView() {
+                updateViews(pos);
+            }
+        };
+
+        ((ViewsFragment) fragmentList.get(pos)).setOnCreateViewListener(fragmentCreatedListener);
+    }
 }

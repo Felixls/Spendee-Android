@@ -2,17 +2,23 @@ package net.tawazz.spendee.fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import net.tawazz.spendee.AppData.ExpData;
 import net.tawazz.spendee.R;
+import net.tawazz.spendee.adapters.ExpAdapter;
 
-public class ExpFragment extends Fragment {
-    private TextView textView;
+import java.util.ArrayList;
+
+public class ExpFragment extends ViewsFragment {
+    private RecyclerView listView;
+    private ExpAdapter expAdapter;
     private View view;
+
     public ExpFragment() {
         // Required empty public constructor
     }
@@ -26,13 +32,26 @@ public class ExpFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_exp, container, false);
-        textView = (TextView) view.findViewById(R.id.textView);
+        listView = (RecyclerView) view.findViewById(R.id.exp_list);
+
+        init();
+
+        if (onCreateViewCallback != null) {
+            this.onCreateViewCallback.onFragmentCreateView();
+        }
 
         return view;
     }
 
-    public void setText(String text) {
-        textView.setText(text);
+    private void init() {
+
+
+    }
+
+    public void setExpenses(ArrayList<ExpData> expenses) {
+        expAdapter = new ExpAdapter(expenses);
+        listView.setAdapter(expAdapter);
+        listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
     }
 
 }

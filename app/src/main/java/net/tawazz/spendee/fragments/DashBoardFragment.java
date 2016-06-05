@@ -12,7 +12,7 @@ import net.tawazz.spendee.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DashBoardFragment extends Fragment {
+public class DashBoardFragment extends ViewsFragment {
 
 
     public DashBoardFragment() {
@@ -24,6 +24,9 @@ public class DashBoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        if (onCreateViewCallback != null) {
+            this.onCreateViewCallback.onFragmentCreateView();
+        }
         return inflater.inflate(R.layout.fragment_dash_board, container, false);
     }
 

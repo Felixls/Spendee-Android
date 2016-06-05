@@ -188,4 +188,12 @@ public class Util {
             window.setStatusBarColor(activity.getResources().getColor(color));
         }
     }
+
+    public static boolean isset(Object value) {
+        return value != null;
+    }
+
+    public static String currencyFormat(float amount){
+        return String.format("$ %.2f".toString(), amount);
+    }
 }
