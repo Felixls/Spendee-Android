@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.joanzapata.iconify.widget.IconTextView;
 
 import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
+import net.tawazz.spendee.AppData.ExpData;
 import net.tawazz.spendee.AppData.ExpItem;
 import net.tawazz.spendee.AppData.Items;
 import net.tawazz.spendee.fragments.DashBoardFragment;
@@ -203,13 +204,11 @@ public class MainActivity extends AppCompatActivity {
                 items.add(new ExpItem("food", 12, tags, new Date()));
                 items.add(new ExpItem("mexican", 8, tags, new Date()));
                 items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
-                items.add(new ExpItem("food", 12, tags, new Date()));
-                items.add(new ExpItem("mexican", 8, tags, new Date()));
-                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
-                items.add(new ExpItem("food", 12, tags, new Date()));
-                items.add(new ExpItem("mexican", 8, tags, new Date()));
-                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
-                fragment.setExpenses(items);
+
+                ArrayList<ExpData> data = new ArrayList<>();
+                data.add(new ExpData(new Date(),items));
+
+                fragment.setExpenses(data);
                 break;
             case 1:
                 break;

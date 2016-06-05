@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.tawazz.spendee.AppData.Items;
+import net.tawazz.spendee.AppData.ExpData;
 import net.tawazz.spendee.R;
 import net.tawazz.spendee.adapters.ExpAdapter;
 
@@ -48,7 +48,7 @@ public class ExpFragment extends ViewsFragment {
 
     }
 
-    public void setExpenses(ArrayList<Items> expenses) {
+    public void setExpenses(ArrayList<ExpData> expenses) {
         expAdapter = new ExpAdapter(expenses);
         listView.setAdapter(expAdapter);
         listView.setLayoutManager(new LinearLayoutManager(this.getContext()));

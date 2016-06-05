@@ -192,4 +192,8 @@ public class Util {
     public static boolean isset(Object value) {
         return value != null;
     }
+
+    public static String currencyFormat(float amount){
+        return String.format("$ %.2f".toString(), amount);
+    }
 }

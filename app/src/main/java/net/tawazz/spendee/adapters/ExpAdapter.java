@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.tawazz.androidutil.Util;
+import net.tawazz.spendee.AppData.ExpData;
 import net.tawazz.spendee.AppData.Items;
 import net.tawazz.spendee.R;
 
@@ -23,9 +24,9 @@ import java.util.ArrayList;
 public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
 
     private Context context;
-    private ArrayList<Items> items;
+    private ArrayList<ExpData> items;
 
-    public ExpAdapter(ArrayList<Items> items) {
+    public ExpAdapter(ArrayList<ExpData> items) {
         this.items = items;
     }
 
@@ -47,11 +48,15 @@ public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
 
-        Items item = items.get(pos);
+        ExpData itemData = items.get(pos);
         SimpleDateFormat sdf = new SimpleDateFormat("cccc, MMMM d yyyy ");
-        holder.mainDate.setText(sdf.format(item.getDate()));
+        holder.mainDate.setText(sdf.format(itemData.getDate()));
         holder.itemsLayout.removeAllViews();
-        holder.itemsLayout.addView(itemsLayout(item.getItemName(), item.getAmount()));
+
+        for(Items item: itemData.getExpenses()) {
+            holder.itemsLayout.addView(itemsLayout(item.getItemName(), item.getAmount()));
+        }
+        holder.itemsLayout.addView(itemsLayout("Total",itemData.getTotal()));
     }
 
 
@@ -77,7 +82,7 @@ public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
         name.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 7f));
 
         TextView amount = new TextView(context);
-        amount.setText("$ " + itemAmount);
+        amount.setText(Util.currencyFormat(itemAmount));
         amount.setPadding(padding, padding, padding, padding);
         amount.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         amount.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 3f));
