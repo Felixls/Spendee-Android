@@ -58,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new TazzyFragmentPagerAdapter(fragmentManager,tabTitles, fragmentList));
 
         // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setBackgroundResource(R.color.redAccent);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -74,10 +75,13 @@ public class MainActivity extends AppCompatActivity {
                     case 0:
                         ExpFragment expFragment = (ExpFragment) fragmentList.get(position);
                         expFragment.setText("Scrolled");
+                        tabLayout.setBackgroundResource(R.color.redAccent);
                         break;
                     case 1:
+                        tabLayout.setBackgroundResource(R.color.greenAccent);
                         break;
                     case 2:
+                        tabLayout.setBackgroundResource(R.color.colorAccent);
                         break;
                 }
             }
