@@ -9,6 +9,7 @@ import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import net.tawazz.androidutil.WebRequest;
+import net.tawazz.spendee.models.User;
 
 import java.lang.reflect.Field;
 
@@ -17,6 +18,7 @@ import java.lang.reflect.Field;
  */
 public class AppData extends Application {
 
+    public static User user;
     private static Context context;
 
     public static WebRequest getWebRequestInstance() {
@@ -61,4 +63,6 @@ public class AppData extends Application {
             Log.e("typeface", e.getMessage());
         }
     }
+
+
 }

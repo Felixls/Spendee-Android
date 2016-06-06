@@ -3,6 +3,7 @@ package net.tawazz.spendee;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import com.joanzapata.iconify.widget.IconTextView;
 
 import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
 import net.tawazz.androidutil.Util;
+import net.tawazz.spendee.AppData.AppData;
 import net.tawazz.spendee.AppData.ExpData;
 import net.tawazz.spendee.AppData.ExpItem;
 import net.tawazz.spendee.AppData.IncData;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Integer> dates;
     private IconTextView nextDate, prevDate;
     private int currentPosition;
+    private AppData appData;
     private ViewPager.OnPageChangeListener navigation = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appData = (AppData) getApplication();
 
         init();
 
@@ -258,29 +262,38 @@ public class MainActivity extends AppCompatActivity {
         ((ViewsFragment) fragmentList.get(pos)).setOnCreateViewListener(fragmentCreatedListener);
     }
 
-    private void updateColors(int position) {
+    private void updateColors(final int position) {
 
-        if (position == 0) {
-            tabLayout.setBackgroundColor(getResources().getColor(R.color.redAccent));
-            tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
-            tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.red));
-            appBar.setBackgroundColor(getResources().getColor(R.color.red));
-            toolbar.setBackgroundColor(getResources().getColor(R.color.red));
-            Util.setWindowColor(this, R.color.red);
-        } else if (position == 1) {
-            tabLayout.setBackgroundResource(R.color.greenAccent);
-            tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.green));
-            tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.green));
-            appBar.setBackgroundColor(getResources().getColor(R.color.green));
-            toolbar.setBackgroundColor(getResources().getColor(R.color.green));
-            Util.setWindowColor(this, R.color.green);
-        } else if (position == 2) {
-            tabLayout.setBackgroundColor(getResources().getColor(R.color.balanceAccent));
-            tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.balance));
-            tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.white));
-            appBar.setBackgroundColor(getResources().getColor(R.color.balance));
-            toolbar.setBackgroundColor(getResources().getColor(R.color.balance));
-            Util.setWindowColor(this, R.color.balance);
-        }
+        Runnable updateUi = new Runnable() {
+            @Override
+            public void run() {
+                if (position == 0) {
+                    tabLayout.setBackgroundColor(getResources().getColor(R.color.redAccent));
+                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
+                    tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.red));
+                    appBar.setBackgroundColor(getResources().getColor(R.color.red));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.red));
+                    Util.setWindowColor(MainActivity.this, R.color.red);
+                } else if (position == 1) {
+                    tabLayout.setBackgroundResource(R.color.greenAccent);
+                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.green));
+                    tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.green));
+                    appBar.setBackgroundColor(getResources().getColor(R.color.green));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.green));
+                    Util.setWindowColor(MainActivity.this, R.color.green);
+                } else if (position == 2) {
+                    tabLayout.setBackgroundColor(getResources().getColor(R.color.balanceAccent));
+                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.balance));
+                    tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.white));
+                    appBar.setBackgroundColor(getResources().getColor(R.color.balance));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.balance));
+                    Util.setWindowColor(MainActivity.this, R.color.balance);
+                }
+            }
+        };
+
+        Handler handler = new Handler();
+        handler.post(updateUi);
     }
+
 }
