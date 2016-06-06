@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.tawazz.androidutil.Util;
-import net.tawazz.spendee.AppData.ExpData;
+import net.tawazz.spendee.AppData.IncData;
 import net.tawazz.spendee.AppData.Items;
 import net.tawazz.spendee.R;
 
@@ -21,12 +21,12 @@ import java.util.ArrayList;
 /**
  * Created by tnyak on 4/06/2016.
  */
-public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
+public class IncAdapter extends RecyclerView.Adapter<IncAdapter.Holder> {
 
     private Context context;
-    private ArrayList<ExpData> items;
+    private ArrayList<IncData> items;
 
-    public ExpAdapter(ArrayList<ExpData> items) {
+    public IncAdapter(ArrayList<IncData> items) {
         this.items = items;
     }
 
@@ -35,7 +35,7 @@ public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.exp_view, parent, false);
+                .inflate(R.layout.inc_view, parent, false);
 
         context = parent.getContext();
         Holder vh = new Holder(v);
@@ -48,15 +48,15 @@ public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
 
-        ExpData itemData = items.get(pos);
+        IncData itemData = items.get(pos);
         SimpleDateFormat sdf = new SimpleDateFormat("cccc, MMMM d yyyy ");
         holder.mainDate.setText(sdf.format(itemData.getDate()));
         holder.itemsLayout.removeAllViews();
 
-        for(Items item: itemData.getExpenses()) {
+        for (Items item : itemData.getIncomes()) {
             holder.itemsLayout.addView(itemsLayout(item.getItemName(), item.getAmount()));
         }
-        holder.itemsLayout.addView(itemsLayout("Total",itemData.getTotal()));
+        holder.itemsLayout.addView(itemsLayoutTotal("Total", itemData.getTotal()));
     }
 
 
@@ -97,7 +97,7 @@ public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
     }
 
     public LinearLayout itemsLayoutTotal(String name, float itemAmount) {
-        return itemsLayout(name, itemAmount, R.color.red);
+        return itemsLayout(name, itemAmount, R.color.green);
     }
 
     public LinearLayout itemsLayout(String itemName, float itemAmount) {

@@ -10,4 +10,6 @@
     <color name="red">#e74c3c</color>
     <color name="greenAccent">#D0ECE7</color>
     <color name="redAccent">#ECCCCA</color>
+    <color name="balance">#60677A</color>
+    <color name="balanceAccent">#A0A3AD</color>
 </resources>

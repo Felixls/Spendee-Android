@@ -1,6 +1,7 @@
 package net.tawazz.spendee;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -13,13 +14,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.joanzapata.iconify.widget.IconTextView;
 
 import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
+import net.tawazz.androidutil.Util;
 import net.tawazz.spendee.AppData.ExpData;
 import net.tawazz.spendee.AppData.ExpItem;
+import net.tawazz.spendee.AppData.IncData;
 import net.tawazz.spendee.AppData.Items;
 import net.tawazz.spendee.fragments.DashBoardFragment;
 import net.tawazz.spendee.fragments.ExpFragment;
@@ -37,11 +41,14 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Fragment> fragmentList;
     private ArrayList<String> tabTitles;
     private Toolbar toolbar;
+    private TabLayout tabLayout;
     private ViewPager viewPager;
     private TextView dateTitle, expAmount, incAmount, balAmount;
     private FloatingActionButton addButton;
+    private LinearLayout appBar;
     private ArrayList<Integer> dates;
     private IconTextView nextDate, prevDate;
+    private int currentPosition;
     private ViewPager.OnPageChangeListener navigation = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -51,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
 
+            currentPosition = position;
             updateViews(position);
         }
 
@@ -90,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         expAmount = (TextView) findViewById(R.id.expense_total_amount);
         incAmount = (TextView) findViewById(R.id.income_total_amount);
         balAmount = (TextView) findViewById(R.id.balance_amount);
+        appBar = (LinearLayout) findViewById(R.id.info_bar);
+        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
 
         setSupportActionBar(toolbar);
         ActionBar appBar = getSupportActionBar();
@@ -102,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentList.add(new IncFragment());
         fragmentList.add(new DashBoardFragment());
 
+        currentPosition = 0;
         dateTitle.setText(generateDate(null, null, null));
 
         expAmount.setText(dashAmount(1000));
@@ -115,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new TazzyFragmentPagerAdapter(fragmentManager, tabTitles, fragmentList));
 
         // Give the TabLayout the ViewPager
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setBackgroundResource(R.color.redAccent);
 
@@ -197,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateViews(int position) {
         // TODO update fragment views when fragment created
+        updateColors(position);
         switch (position) {
             case 0:
                 ExpFragment fragment = (ExpFragment) fragmentList.get(position);
@@ -207,11 +219,21 @@ public class MainActivity extends AppCompatActivity {
                 items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
 
                 ArrayList<ExpData> data = new ArrayList<>();
-                data.add(new ExpData(new Date(),items));
+                data.add(new ExpData(new Date(), items));
 
                 fragment.setExpenses(data);
                 break;
             case 1:
+                IncFragment inFragment = (IncFragment) fragmentList.get(position);
+                items = new ArrayList<>();
+                tags = new ArrayList<>(Arrays.asList("food", "drink"));
+                items.add(new ExpItem("mexican", 8, tags, new Date()));
+                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
+
+                ArrayList<IncData> incData = new ArrayList<>();
+                incData.add(new IncData(new Date(), items));
+
+                inFragment.setIncomes(incData);
                 break;
             case 2:
                 break;
@@ -226,10 +248,39 @@ public class MainActivity extends AppCompatActivity {
         ViewsFragment.onCreateViewListener fragmentCreatedListener = new ViewsFragment.onCreateViewListener() {
             @Override
             public void onFragmentCreateView() {
-                updateViews(pos);
+                if (currentPosition == 0) {
+                    updateViews(pos);
+                }
+
             }
         };
 
         ((ViewsFragment) fragmentList.get(pos)).setOnCreateViewListener(fragmentCreatedListener);
+    }
+
+    private void updateColors(int position) {
+
+        if (position == 0) {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.redAccent));
+            tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
+            tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.red));
+            appBar.setBackgroundColor(getResources().getColor(R.color.red));
+            toolbar.setBackgroundColor(getResources().getColor(R.color.red));
+            Util.setWindowColor(this, R.color.red);
+        } else if (position == 1) {
+            tabLayout.setBackgroundResource(R.color.greenAccent);
+            tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.green));
+            tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.green));
+            appBar.setBackgroundColor(getResources().getColor(R.color.green));
+            toolbar.setBackgroundColor(getResources().getColor(R.color.green));
+            Util.setWindowColor(this, R.color.green);
+        } else if (position == 2) {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.balanceAccent));
+            tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.balance));
+            tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.white));
+            appBar.setBackgroundColor(getResources().getColor(R.color.balance));
+            toolbar.setBackgroundColor(getResources().getColor(R.color.balance));
+            Util.setWindowColor(this, R.color.balance);
+        }
     }
 }

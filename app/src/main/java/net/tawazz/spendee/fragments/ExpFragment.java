@@ -31,7 +31,7 @@ public class ExpFragment extends ViewsFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_exp, container, false);
+        view = inflater.inflate(R.layout.fragment_custom, container, false);
         listView = (RecyclerView) view.findViewById(R.id.exp_list);
 
         init();
