@@ -24,9 +24,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="12-june-2016 "
+                android:text="Wednesday,June 12th 2016 "
                 android:textColor="@color/white"
-                android:textSize="30sp" />
+                android:textSize="25sp" />
 
             <LinearLayout
                 android:id="@+id/items"

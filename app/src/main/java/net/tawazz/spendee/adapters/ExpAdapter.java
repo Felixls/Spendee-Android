@@ -49,14 +49,15 @@ public class ExpAdapter extends RecyclerView.Adapter<ExpAdapter.Holder> {
     public void onBindViewHolder(Holder holder, int pos) {
 
         ExpData itemData = items.get(pos);
-        SimpleDateFormat sdf = new SimpleDateFormat("cccc, MMMM d yyyy ");
+        String sufix = Util.getDayOfMonthSuffix(itemData.getDate().getDate());
+        SimpleDateFormat sdf = new SimpleDateFormat("cccc, MMMM d'" + sufix + "' yyyy ");
         holder.mainDate.setText(sdf.format(itemData.getDate()));
         holder.itemsLayout.removeAllViews();
 
         for(Items item: itemData.getExpenses()) {
             holder.itemsLayout.addView(itemsLayout(item.getItemName(), item.getAmount()));
         }
-        holder.itemsLayout.addView(itemsLayout("Total",itemData.getTotal()));
+        holder.itemsLayout.addView(itemsLayoutTotal("Total", itemData.getTotal()));
     }
 
 

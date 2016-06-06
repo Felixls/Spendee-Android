@@ -8,6 +8,8 @@ import android.util.Log;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
+import net.tawazz.androidutil.WebRequest;
+
 import java.lang.reflect.Field;
 
 /**
@@ -15,9 +17,16 @@ import java.lang.reflect.Field;
  */
 public class AppData extends Application {
 
+    private static Context context;
+
+    public static WebRequest getWebRequestInstance() {
+        return WebRequest.getInstance(context);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
         Iconify.with(new FontAwesomeModule());
         overrideFont(this);
     }

@@ -49,7 +49,8 @@ public class IncAdapter extends RecyclerView.Adapter<IncAdapter.Holder> {
     public void onBindViewHolder(Holder holder, int pos) {
 
         IncData itemData = items.get(pos);
-        SimpleDateFormat sdf = new SimpleDateFormat("cccc, MMMM d yyyy ");
+        String sufix = Util.getDayOfMonthSuffix(itemData.getDate().getDate());
+        SimpleDateFormat sdf = new SimpleDateFormat("cccc, MMMM d'" + sufix + "' yyyy ");
         holder.mainDate.setText(sdf.format(itemData.getDate()));
         holder.itemsLayout.removeAllViews();
 
