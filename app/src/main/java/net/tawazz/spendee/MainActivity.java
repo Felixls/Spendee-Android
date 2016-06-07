@@ -1,5 +1,6 @@
 package net.tawazz.spendee;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.joanzapata.iconify.widget.IconTextView;
 
 import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
@@ -26,16 +30,25 @@ import net.tawazz.spendee.AppData.AppData;
 import net.tawazz.spendee.AppData.ExpData;
 import net.tawazz.spendee.AppData.ExpItem;
 import net.tawazz.spendee.AppData.IncData;
+import net.tawazz.spendee.AppData.IncItem;
 import net.tawazz.spendee.AppData.Items;
 import net.tawazz.spendee.fragments.DashBoardFragment;
 import net.tawazz.spendee.fragments.ExpFragment;
 import net.tawazz.spendee.fragments.IncFragment;
 import net.tawazz.spendee.fragments.ViewsFragment;
+import net.tawazz.spendee.helpers.Sync;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private IconTextView nextDate, prevDate;
     private int currentPosition;
     private AppData appData;
+    private ArrayList<ExpData> expData = new ArrayList<>();
+    private ArrayList<IncData> incData = new ArrayList<>();
     private ViewPager.OnPageChangeListener navigation = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -108,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar appBar = getSupportActionBar();
         appBar.setDisplayShowTitleEnabled(false);
+        loadData();
 
         fragmentManager = getSupportFragmentManager();
         fragmentList = new ArrayList<>();
@@ -118,10 +134,6 @@ public class MainActivity extends AppCompatActivity {
 
         currentPosition = 0;
         dateTitle.setText(generateDate(null, null, null));
-
-        expAmount.setText(dashAmount(1000));
-        incAmount.setText(dashAmount(800));
-        balAmount.setText(dashAmount(200));
 
         tabTitles = new ArrayList<>(
                 Arrays.asList("Expenses", "Incomes", "Dashboard")
@@ -148,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 dateTitle.setText(generateDate(dates.get(0), dates.get(1) + 1, null));
+                loadData();
             }
         });
 
@@ -155,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 dateTitle.setText(generateDate(dates.get(0), dates.get(1) - 1, null));
+                loadData();
             }
         });
 
@@ -215,29 +229,23 @@ public class MainActivity extends AppCompatActivity {
         updateColors(position);
         switch (position) {
             case 0:
-                ExpFragment fragment = (ExpFragment) fragmentList.get(position);
-                ArrayList<Items> items = new ArrayList<>();
-                ArrayList<String> tags = new ArrayList<>(Arrays.asList("food", "drink"));
-                items.add(new ExpItem("food", 12, tags, new Date()));
-                items.add(new ExpItem("mexican", 8, tags, new Date()));
-                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
-
-                ArrayList<ExpData> data = new ArrayList<>();
-                data.add(new ExpData(new Date(), items));
-
-                fragment.setExpenses(data);
+                ExpFragment expFragment = (ExpFragment) fragmentList.get(position);
+                expFragment.setExpenses(expData);
                 break;
             case 1:
-                IncFragment inFragment = (IncFragment) fragmentList.get(position);
-                items = new ArrayList<>();
-                tags = new ArrayList<>(Arrays.asList("food", "drink"));
-                items.add(new ExpItem("mexican", 8, tags, new Date()));
-                items.add(new ExpItem("asian", (float) 8.95, tags, new Date()));
+                IncFragment incFragment = (IncFragment) fragmentList.get(position);
+                incFragment.setIncomes(incData);
+                incFragment.setOnCreateViewListener(new ViewsFragment.onCreateViewListener() {
+                    @Override
+                    public void onFragmentCreateView() {
 
-                ArrayList<IncData> incData = new ArrayList<>();
-                incData.add(new IncData(new Date(), items));
+                    }
 
-                inFragment.setIncomes(incData);
+                    @Override
+                    public void onRefresh() {
+                        loadData();
+                    }
+                });
                 break;
             case 2:
                 break;
@@ -256,6 +264,11 @@ public class MainActivity extends AppCompatActivity {
                     updateViews(pos);
                 }
 
+            }
+
+            @Override
+            public void onRefresh() {
+                loadData();
             }
         };
 
@@ -294,6 +307,108 @@ public class MainActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         handler.post(updateUi);
+    }
+
+    public void loadData() {
+
+        final ProgressDialog dialog = Util.loadingDialog(this, "Loading...");
+        String url;
+
+        if (dates != null) {
+            url = Sync.DATA_URL + AppData.user.getUserId() + "/" + dates.get(0) + "/" + dates.get(1);
+
+        } else {
+            url = Sync.DATA_URL + AppData.user.getUserId();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(url, new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    expAmount.setText(dashAmount(response.getDouble("exp_total")));
+                    incAmount.setText(dashAmount(response.getDouble("inc_total")));
+                    balAmount.setText(dashAmount(response.getDouble("balance")));
+
+                    expData.clear();
+                    incData.clear();
+                    JSONObject expenses = response.getJSONObject("exp_data");
+
+                    Iterator<String> expIter = expenses.keys();
+
+                    if (expenses.length() > 0) {
+                        while (expIter.hasNext()) {
+                            String key = expIter.next();
+                            try {
+
+                                JSONArray expOnDate = expenses.getJSONArray(key);
+                                ArrayList<Items> items = new ArrayList<>();
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-d");
+                                Date parsedDate = formatter.parse(key);
+                                for (int i = 0; i < expOnDate.length(); i++) {
+                                    JSONObject expItem = (JSONObject) expOnDate.get(i);
+                                    items.add(new ExpItem(expItem.getString("name"), (float) expItem.getDouble("cost"), null, parsedDate));
+                                }
+                                expData.add(new ExpData(parsedDate, items));
+
+
+                            } catch (JSONException e) {
+                                // Something went wrong!
+                                dialog.dismiss();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                dialog.dismiss();
+                            }
+                        }
+                    }
+
+                    JSONObject incomes = response.getJSONObject("inc_data");
+                    Iterator<String> incIter = incomes.keys();
+                    if (incomes.length() > 0) {
+                        while (incIter.hasNext()) {
+                            String key = incIter.next();
+                            try {
+
+                                JSONArray incOnDate = incomes.getJSONArray(key);
+                                ArrayList<Items> items = new ArrayList<>();
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-d");
+                                Date parsedDate = formatter.parse(key);
+                                for (int i = 0; i < incOnDate.length(); i++) {
+                                    JSONObject incItem = (JSONObject) incOnDate.get(i);
+                                    items.add(new IncItem(incItem.getString("name"), (float) incItem.getDouble("cost"), null, parsedDate));
+                                }
+                                incData.add(new IncData(parsedDate, items));
+
+
+                            } catch (JSONException e) {
+                                // Something went wrong!
+                                dialog.dismiss();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                dialog.dismiss();
+                            }
+                        }
+
+                    }
+
+                    updateViews(currentPosition);
+                    dialog.dismiss();
+
+                } catch (JSONException e) {
+                    updateViews(currentPosition);
+                    dialog.dismiss();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                updateViews(currentPosition);
+            }
+        });
+
+        AppData.getWebRequestInstance().getRequestQueue().add(request);
+
     }
 
 }

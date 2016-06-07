@@ -22,5 +22,7 @@ public class ViewsFragment extends Fragment {
 
     public interface onCreateViewListener {
         void onFragmentCreateView();
+
+        void onRefresh();
     }
 }
