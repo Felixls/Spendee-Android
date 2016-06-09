@@ -89,8 +89,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/dash_amnt"
-                        android:typeface="monospace" />
+                        android:text="@string/dash_amnt" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -111,8 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/dash_amnt"
-                        android:typeface="monospace" />
+                        android:text="@string/dash_amnt" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -133,8 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/dash_amnt"
-                        android:typeface="monospace" />
+                        android:text="@string/dash_amnt" />
                 </LinearLayout>
 
 
@@ -158,15 +155,17 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/sliding_tabs" />
 
-        </RelativeLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/viewPager"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="bottom|end"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/ic_add_black_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_add_black_24dp" />
+        </RelativeLayout>
 
     </FrameLayout>
 

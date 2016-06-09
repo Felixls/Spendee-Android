@@ -17,6 +17,8 @@ import net.tawazz.spendee.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by tnyak on 4/06/2016.
@@ -28,6 +30,13 @@ public class IncAdapter extends RecyclerView.Adapter<IncAdapter.Holder> {
 
     public IncAdapter(ArrayList<IncData> items) {
         this.items = items;
+
+        Collections.sort(this.items, new Comparator<IncData>() {
+            @Override
+            public int compare(IncData lhs, IncData rhs) {
+                return rhs.getDate().compareTo(lhs.getDate());
+            }
+        });
     }
 
 

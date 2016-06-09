@@ -149,7 +149,7 @@ public class AddActivity extends AppCompatActivity {
             tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
             tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.red));
         } else if (position == 1) {
-            tabLayout.setBackgroundResource(R.color.greenAccent);
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.greenAccent));
             tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.green));
             tabLayout.setTabTextColors(Color.parseColor("#333333"), getResources().getColor(R.color.green));
         }
