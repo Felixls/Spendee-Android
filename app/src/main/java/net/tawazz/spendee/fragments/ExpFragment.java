@@ -16,6 +16,8 @@ import net.tawazz.spendee.adapters.ExpAdapter;
 
 import java.util.ArrayList;
 
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
+
 public class ExpFragment extends ViewsFragment {
     private RecyclerView listView;
     private SwipeRefreshLayout refreshLayout;
@@ -70,7 +72,9 @@ public class ExpFragment extends ViewsFragment {
             errorView.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
             expAdapter = new ExpAdapter(expenses);
-            listView.setAdapter(expAdapter);
+            AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(expAdapter);
+            alphaAdapter.setDuration(1000);
+            listView.setAdapter(alphaAdapter);
             listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         }
 

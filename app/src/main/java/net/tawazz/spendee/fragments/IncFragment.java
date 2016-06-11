@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 
 import net.tawazz.spendee.AppData.IncData;
@@ -16,6 +18,8 @@ import net.tawazz.spendee.R;
 import net.tawazz.spendee.adapters.IncAdapter;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,7 +81,9 @@ public class IncFragment extends ViewsFragment {
             errorView.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
             incAdapter = new IncAdapter(incomes);
-            listView.setAdapter(incAdapter);
+            AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(incAdapter);
+            alphaAdapter.setInterpolator(new BounceInterpolator());
+            listView.setAdapter(alphaAdapter);
             listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         }
     }
