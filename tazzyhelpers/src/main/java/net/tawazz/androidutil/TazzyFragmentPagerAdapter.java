@@ -2,10 +2,11 @@ package net.tawazz.androidutil;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 
-public class TazzyFragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
+public class TazzyFragmentPagerAdapter extends FragmentPagerAdapter {
     private ArrayList<String> tabTitles;
     private ArrayList<Fragment> fragmentList;
 

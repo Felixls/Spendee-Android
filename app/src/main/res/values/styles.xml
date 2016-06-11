@@ -10,6 +10,12 @@
         <item name="android:typeface">serif</item>
     </style>
 
+    <style name="DialogThemeRed" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/red</item>
+    </style>
+    <style name="DialogThemeGreen" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/green</item>
+    </style>
     <style name="OrangeScreen" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

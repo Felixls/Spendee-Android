@@ -19,4 +19,7 @@
     <string name="action_favorite">favorite</string>
     <string name="dash_amnt">$ %.2f</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
