@@ -1,14 +1,71 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="net.tawazz.spendee.fragments.DashBoardFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="dashboard" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Year Overview"
+                android:textColor="@color/balanceAccent"
+                android:textSize="20sp" />
+
+            <WebView
+                android:id="@+id/year_overview_graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></WebView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Expenses Overview"
+                android:textColor="@color/balanceAccent"
+                android:textSize="20sp" />
+
+            <WebView
+                android:id="@+id/expenses_graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></WebView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Incomes Overview"
+                android:textColor="@color/balanceAccent"
+                android:textSize="20sp" />
+
+            <WebView
+                android:id="@+id/incomes_graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></WebView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Tags Overview"
+                android:textColor="@color/balanceAccent"
+                android:textSize="20sp" />
+
+            <WebView
+                android:id="@+id/tags_graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></WebView>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

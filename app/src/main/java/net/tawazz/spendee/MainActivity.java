@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentList.add(new ExpFragment());
         fragmentList.add(new IncFragment());
-        fragmentList.add(new DashBoardFragment());
+        fragmentList.add(DashBoardFragment.Instance(Calendar.getInstance()));
 
         currentPosition = 0;
         dateTitle.setText(generateDate(null, null, null));
@@ -203,7 +203,10 @@ public class MainActivity extends AppCompatActivity {
                 year -= 1;
             }
             cal.set(year, month - 1, 1);
-        } else {
+        } else if (year != null ) {
+            cal.set(year,0, 1);
+            return ""+cal.get(Calendar.YEAR);
+        }else {
             year = cal.get(Calendar.YEAR);
             month = cal.get(Calendar.MONTH) + 1;
             day = cal.get(Calendar.DATE);
@@ -248,6 +251,19 @@ public class MainActivity extends AppCompatActivity {
                 });
                 break;
             case 2:
+                generateDate(dates.get(0),null,null);
+                DashBoardFragment dashBoardFragment = (DashBoardFragment) fragmentList.get(position);
+                dashBoardFragment.setOnCreateViewListener(new ViewsFragment.onCreateViewListener() {
+                    @Override
+                    public void onFragmentCreateView() {
+
+                    }
+
+                    @Override
+                    public void onRefresh() {
+
+                    }
+                });
                 break;
         }
     }
