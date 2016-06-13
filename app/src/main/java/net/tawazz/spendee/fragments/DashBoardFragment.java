@@ -3,6 +3,7 @@ package net.tawazz.spendee.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,24 +35,14 @@ public class DashBoardFragment extends ViewsFragment {
     WebView incomesGraph;
     @BindView(R.id.tags_graph)
     WebView tagsGraph;
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout refresh;
     private View view;
     private AppData appData;
-    private static DashBoardFragment instance;
     private Calendar date;
 
     public DashBoardFragment() {
-        // Required empty public constructor
-    }
-
-    public static DashBoardFragment Instance(Calendar date) {
-
-        if (instance != null) {
-            instance.setDate(date);
-        } else {
-            instance = new DashBoardFragment();
-            instance.setDate(date);
-        }
-        return instance;
+        date = Calendar.getInstance();
     }
 
     @Override
@@ -88,9 +79,26 @@ public class DashBoardFragment extends ViewsFragment {
         expensesGraph.loadUrl(Sync.EXPENSES_GRAPH_URL + "/" + appData.user.getUserId() + "/" + date.get(Calendar.YEAR));
         incomesGraph.loadUrl(Sync.INCOMES_GRAPH_URL + "/" + appData.user.getUserId() + "/" + date.get(Calendar.YEAR));
         tagsGraph.loadUrl(Sync.TAGS_GRAPH_URL + "/" + appData.user.getUserId() + "/" + date.get(Calendar.YEAR));
+
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (onCreateViewCallback != null) {
+                    onCreateViewCallback.onRefresh();
+                    refresh.setRefreshing(false);
+                }
+            }
+        });
     }
 
     public void setDate(Calendar date) {
         this.date = date;
+    }
+
+    public void refresh(){
+        yearOverviewGraph.reload();
+        expensesGraph.reload();
+        incomesGraph.reload();
+        tagsGraph.reload();
     }
 }

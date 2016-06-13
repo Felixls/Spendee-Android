@@ -59,6 +59,10 @@ public class IncFragment extends ViewsFragment {
     }
 
     private void init() {
+
+        incAdapter = new IncAdapter(new ArrayList<IncData>());
+        listView.setAdapter(incAdapter);
+        listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -82,7 +86,6 @@ public class IncFragment extends ViewsFragment {
             listView.setVisibility(View.VISIBLE);
             incAdapter = new IncAdapter(incomes);
             AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(incAdapter);
-            alphaAdapter.setInterpolator(new BounceInterpolator());
             listView.setAdapter(alphaAdapter);
             listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         }

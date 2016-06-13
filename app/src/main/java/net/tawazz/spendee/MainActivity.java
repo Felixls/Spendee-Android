@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.joanzapata.iconify.widget.IconTextView;
 
+import net.tawazz.androidutil.PersistentLoginManager;
 import net.tawazz.androidutil.TazzyFragmentPagerAdapter;
 import net.tawazz.androidutil.Util;
 import net.tawazz.spendee.AppData.AppData;
@@ -98,7 +99,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.action_logout :
+                appData.user = null;
+                PersistentLoginManager manager = new PersistentLoginManager(this);
+                manager.ClearPersitentData();
+                Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -123,16 +135,19 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar appBar = getSupportActionBar();
         appBar.setDisplayShowTitleEnabled(false);
-        loadData();
+        expAmount.setText(dashAmount(0));
+        incAmount.setText(dashAmount(0));
+        balAmount.setText(dashAmount(0));
+        currentPosition = 0;
 
         fragmentManager = getSupportFragmentManager();
         fragmentList = new ArrayList<>();
 
         fragmentList.add(new ExpFragment());
         fragmentList.add(new IncFragment());
-        fragmentList.add(DashBoardFragment.Instance(Calendar.getInstance()));
+        fragmentList.add(new DashBoardFragment());
 
-        currentPosition = 0;
+
         dateTitle.setText(generateDate(null, null, null));
 
         tabTitles = new ArrayList<>(
@@ -147,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setBackgroundResource(R.color.redAccent);
 
         viewPager.addOnPageChangeListener(navigation);
+        viewPager.setOffscreenPageLimit(2);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 2:
                 generateDate(dates.get(0),null,null);
-                DashBoardFragment dashBoardFragment = (DashBoardFragment) fragmentList.get(position);
+                final DashBoardFragment dashBoardFragment = (DashBoardFragment) fragmentList.get(position);
                 dashBoardFragment.setOnCreateViewListener(new ViewsFragment.onCreateViewListener() {
                     @Override
                     public void onFragmentCreateView() {
@@ -261,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onRefresh() {
-
+                        dashBoardFragment.refresh();
                     }
                 });
                 break;
@@ -288,7 +304,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        ((ViewsFragment) fragmentList.get(pos)).setOnCreateViewListener(fragmentCreatedListener);
+        ExpFragment fragment = ((ExpFragment) fragmentList.get(pos));
+        fragment.setOnCreateViewListener(fragmentCreatedListener);
     }
 
     private void updateColors(final int position) {
@@ -327,7 +344,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadData() {
 
-        final ProgressDialog dialog = Util.loadingDialog(this, "Loading...");
         String url;
 
         if (dates != null) {
@@ -369,10 +385,8 @@ public class MainActivity extends AppCompatActivity {
 
                             } catch (JSONException e) {
                                 // Something went wrong!
-                                dialog.dismiss();
                             } catch (ParseException e) {
                                 e.printStackTrace();
-                                dialog.dismiss();
                             }
                         }
                     }
@@ -397,21 +411,17 @@ public class MainActivity extends AppCompatActivity {
 
                             } catch (JSONException e) {
                                 // Something went wrong!
-                                dialog.dismiss();
                             } catch (ParseException e) {
                                 e.printStackTrace();
-                                dialog.dismiss();
                             }
                         }
 
                     }
 
                     updateViews(currentPosition);
-                    dialog.dismiss();
 
                 } catch (JSONException e) {
                     updateViews(currentPosition);
-                    dialog.dismiss();
                 }
 
 
@@ -426,5 +436,7 @@ public class MainActivity extends AppCompatActivity {
         AppData.getWebRequestInstance().getRequestQueue().add(request);
 
     }
+
+
 
 }

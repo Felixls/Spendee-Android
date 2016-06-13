@@ -46,12 +46,19 @@ public class ExpFragment extends ViewsFragment {
 
         if (onCreateViewCallback != null) {
             this.onCreateViewCallback.onFragmentCreateView();
+            refreshLayout.setRefreshing(true);
+            this.onCreateViewCallback.onRefresh();
+            refreshLayout.setRefreshing(true);
         }
 
         return view;
     }
 
     private void init() {
+
+        expAdapter = new ExpAdapter(new ArrayList<ExpData>());
+        listView.setAdapter(expAdapter);
+        listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -73,7 +80,6 @@ public class ExpFragment extends ViewsFragment {
             listView.setVisibility(View.VISIBLE);
             expAdapter = new ExpAdapter(expenses);
             AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(expAdapter);
-            alphaAdapter.setDuration(1000);
             listView.setAdapter(alphaAdapter);
             listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         }
@@ -81,6 +87,12 @@ public class ExpFragment extends ViewsFragment {
 
 
 
+    }
+
+    public void refresh(){
+        refreshLayout.setRefreshing(true);
+        onCreateViewCallback.onRefresh();
+        refreshLayout.setRefreshing(false);
     }
 
 }
