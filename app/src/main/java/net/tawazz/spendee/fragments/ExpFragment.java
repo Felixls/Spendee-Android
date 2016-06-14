@@ -2,6 +2,7 @@ package net.tawazz.spendee.fragments;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,9 +47,16 @@ public class ExpFragment extends ViewsFragment {
 
         if (onCreateViewCallback != null) {
             this.onCreateViewCallback.onFragmentCreateView();
-            refreshLayout.setRefreshing(true);
-            this.onCreateViewCallback.onRefresh();
-            refreshLayout.setRefreshing(true);
+            Handler handler = new Handler();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    refreshLayout.setRefreshing(true);
+                    onCreateViewCallback.onRefresh();
+                    refreshLayout.setRefreshing(false);
+                }
+            });
+
         }
 
         return view;
@@ -89,10 +97,18 @@ public class ExpFragment extends ViewsFragment {
 
     }
 
-    public void refresh(){
-        refreshLayout.setRefreshing(true);
-        onCreateViewCallback.onRefresh();
-        refreshLayout.setRefreshing(false);
+    @Override
+    public void setRefreshing(final boolean isRefreshing) {
+        Handler handler = new Handler();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.setRefreshing(isRefreshing);
+            }
+        });
+
     }
+
 
 }

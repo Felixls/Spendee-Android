@@ -25,4 +25,8 @@ public class ViewsFragment extends Fragment {
 
         void onRefresh();
     }
+
+    public  void setRefreshing(final boolean isRefreshing){
+
+    }
 }

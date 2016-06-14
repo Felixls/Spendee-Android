@@ -2,6 +2,7 @@ package net.tawazz.spendee.fragments;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,8 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 
 import net.tawazz.spendee.AppData.IncData;
@@ -89,5 +88,18 @@ public class IncFragment extends ViewsFragment {
             listView.setAdapter(alphaAdapter);
             listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         }
+    }
+
+    @Override
+    public void setRefreshing(final boolean isRefreshing) {
+        Handler handler = new Handler();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.setRefreshing(isRefreshing);
+            }
+        });
+
     }
 }

@@ -1,6 +1,5 @@
 package net.tawazz.spendee;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -344,6 +343,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadData() {
 
+        final ViewsFragment fragment = (ViewsFragment) fragmentList.get(viewPager.getCurrentItem());
+        fragment.setRefreshing(true);
         String url;
 
         if (dates != null) {
@@ -419,9 +420,11 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     updateViews(currentPosition);
+                    fragment.setRefreshing(false);
 
                 } catch (JSONException e) {
                     updateViews(currentPosition);
+                    fragment.setRefreshing(false);
                 }
 
 
@@ -429,6 +432,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                fragment.setRefreshing(false);
                 updateViews(currentPosition);
             }
         });
