@@ -50,6 +50,10 @@ public class AppData extends Application {
             boldTypefaceField.setAccessible(true);
             boldTypefaceField.set(null, boldTypeface);
 
+            final Field italicTypefaceField = Typeface.class.getDeclaredField("MONOSPACE");
+            italicTypefaceField.setAccessible(true);
+            italicTypefaceField.set(null,italicTypeface);
+
             final Field sDefaults = Typeface.class.getDeclaredField("sDefaults");
             sDefaults.setAccessible(true);
             sDefaults.set(null, new Typeface[]{
