@@ -364,59 +364,79 @@ public class MainActivity extends AppCompatActivity {
 
                     expData.clear();
                     incData.clear();
-                    JSONObject expenses = response.getJSONObject("exp_data");
 
-                    Iterator<String> expIter = expenses.keys();
+                    JSONObject expenses = response.optJSONObject("exp_data");
 
-                    if (expenses.length() > 0) {
-                        while (expIter.hasNext()) {
-                            String key = expIter.next();
-                            try {
+                    if(expenses != null)
+                    {
+                        Iterator<String> expIter = expenses.keys();
 
-                                JSONArray expOnDate = expenses.getJSONArray(key);
-                                ArrayList<Items> items = new ArrayList<>();
-                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-d");
-                                Date parsedDate = formatter.parse(key);
-                                for (int i = 0; i < expOnDate.length(); i++) {
-                                    JSONObject expItem = (JSONObject) expOnDate.get(i);
-                                    items.add(new ExpItem(expItem.getString("name"), (float) expItem.getDouble("cost"), null, parsedDate));
+                        if (expenses.length() > 0)
+                        {
+                            while (expIter.hasNext())
+                            {
+                                String key = expIter.next();
+                                try
+                                {
+
+                                    JSONArray expOnDate = expenses.getJSONArray(key);
+                                    ArrayList<Items> items = new ArrayList<>();
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-d");
+                                    Date parsedDate = formatter.parse(key);
+                                    for (int i = 0; i < expOnDate.length(); i++)
+                                    {
+                                        JSONObject expItem = (JSONObject) expOnDate.get(i);
+                                        items.add(new ExpItem(expItem.getString("name"), (float) expItem.getDouble("cost"), null, parsedDate));
+                                    }
+                                    expData.add(new ExpData(parsedDate, items));
+
+
+                                } catch (JSONException e)
+                                {
+                                    // Something went wrong!
+                                } catch (ParseException e)
+                                {
+                                    e.printStackTrace();
                                 }
-                                expData.add(new ExpData(parsedDate, items));
-
-
-                            } catch (JSONException e) {
-                                // Something went wrong!
-                            } catch (ParseException e) {
-                                e.printStackTrace();
                             }
                         }
                     }
+                    
+                    JSONObject incomes = response.optJSONObject("inc_data");
 
-                    JSONObject incomes = response.getJSONObject("inc_data");
-                    Iterator<String> incIter = incomes.keys();
-                    if (incomes.length() > 0) {
-                        while (incIter.hasNext()) {
-                            String key = incIter.next();
-                            try {
+                    if(incomes != null)
+                    {
+                        Iterator<String> incIter = incomes.keys();
+                        if (incomes.length() > 0)
+                        {
+                            while (incIter.hasNext())
+                            {
+                                String key = incIter.next();
+                                try
+                                {
 
-                                JSONArray incOnDate = incomes.getJSONArray(key);
-                                ArrayList<Items> items = new ArrayList<>();
-                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-d");
-                                Date parsedDate = formatter.parse(key);
-                                for (int i = 0; i < incOnDate.length(); i++) {
-                                    JSONObject incItem = (JSONObject) incOnDate.get(i);
-                                    items.add(new IncItem(incItem.getString("name"), (float) incItem.getDouble("cost"), null, parsedDate));
+                                    JSONArray incOnDate = incomes.getJSONArray(key);
+                                    ArrayList<Items> items = new ArrayList<>();
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-d");
+                                    Date parsedDate = formatter.parse(key);
+                                    for (int i = 0; i < incOnDate.length(); i++)
+                                    {
+                                        JSONObject incItem = (JSONObject) incOnDate.get(i);
+                                        items.add(new IncItem(incItem.getString("name"), (float) incItem.getDouble("cost"), null, parsedDate));
+                                    }
+                                    incData.add(new IncData(parsedDate, items));
+
+
+                                } catch (JSONException e)
+                                {
+                                    // Something went wrong!
+                                } catch (ParseException e)
+                                {
+                                    e.printStackTrace();
                                 }
-                                incData.add(new IncData(parsedDate, items));
-
-
-                            } catch (JSONException e) {
-                                // Something went wrong!
-                            } catch (ParseException e) {
-                                e.printStackTrace();
                             }
-                        }
 
+                        }
                     }
 
                     updateViews(currentPosition);
