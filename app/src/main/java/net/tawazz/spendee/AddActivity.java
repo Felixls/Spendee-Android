@@ -172,7 +172,8 @@ public class AddActivity extends AppCompatActivity implements AddFragment.TagSel
         Calendar date = selectedDate;
         String itemName = item.getText().toString();
         String amntString = amount.getText().toString();
-        amntString = amntString.substring(1);
+        amntString = amntString.substring(1); //remove $ sign
+        amntString = amntString.replace(",", ""); // remove formated commas
         float amnt = Float.parseFloat(amntString);
         final ProgressDialog dialog = Util.loadingDialog(this, "Saving...");
 
@@ -183,7 +184,7 @@ public class AddActivity extends AppCompatActivity implements AddFragment.TagSel
             item.put("name", itemName);
             item.put("cost", amnt);
             item.put("date", date.get(Calendar.YEAR) + "/" + (date.get(Calendar.MONTH) + 1) + "/" + date.get(Calendar.DAY_OF_MONTH));
-            item.put("user_id", appData.user.getUserId());
+            item.put("user_id", AppData.user.getUserId());
             data.put("item", item);
 
             if (selectedTags.size() > 0) {
@@ -214,7 +215,7 @@ public class AddActivity extends AppCompatActivity implements AddFragment.TagSel
             }
         });
 
-        appData.getWebRequestInstance().getRequestQueue().add(request);
+        AppData.getWebRequestInstance().getRequestQueue().add(request);
 
     }
 
