@@ -9,6 +9,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -165,57 +166,64 @@ public class AddActivity extends AppCompatActivity implements AddFragment.TagSel
     }
 
     private void submit() {
-        /* Todo
-        *  add validation and submitting code here
-        */
-        AddFragment fragment = (AddFragment) ((AddAdapter) viewPager.getAdapter()).getItem(viewPager.getCurrentItem());
+
         Calendar date = selectedDate;
         String itemName = item.getText().toString();
         String amntString = amount.getText().toString();
-        amntString = amntString.substring(1); //remove $ sign
-        amntString = amntString.replace(",", ""); // remove formated commas
-        float amnt = Float.parseFloat(amntString);
-        final ProgressDialog dialog = Util.loadingDialog(this, "Saving...");
 
-        JSONObject data = new JSONObject();
-        JSONArray tags = new JSONArray();
-        JSONObject item = new JSONObject();
-        try {
-            item.put("name", itemName);
-            item.put("cost", amnt);
-            item.put("date", date.get(Calendar.YEAR) + "/" + (date.get(Calendar.MONTH) + 1) + "/" + date.get(Calendar.DAY_OF_MONTH));
-            item.put("user_id", AppData.user.getUserId());
-            data.put("item", item);
+        if (date != null && !itemName.isEmpty() && !amntString.isEmpty() && amntString.length() > 2) {
+            AddFragment fragment = (AddFragment) ((AddAdapter) viewPager.getAdapter()).getItem(viewPager.getCurrentItem());
+            amntString = amntString.substring(1); //remove $ sign
+            amntString = amntString.replace(",", ""); // remove formated commas
+            float amnt = Float.parseFloat(amntString);
+            final ProgressDialog dialog = Util.loadingDialog(this, "Saving...");
 
-            if (selectedTags.size() > 0) {
-                for (Tags tag : selectedTags) {
-                    JSONObject tagData = new JSONObject();
-                    tagData.put("tag_id", tag.getTagId());
-                    tags.put(tagData);
+            JSONObject data = new JSONObject();
+            JSONArray tags = new JSONArray();
+            JSONObject item = new JSONObject();
+            try {
+                item.put("name", itemName);
+                item.put("cost", amnt);
+                item.put("date", date.get(Calendar.YEAR) + "/" + (date.get(Calendar.MONTH) + 1) + "/" + date.get(Calendar.DAY_OF_MONTH));
+                item.put("user_id", AppData.user.getUserId());
+                data.put("item", item);
+
+                if (selectedTags.size() > 0) {
+                    for (Tags tag : selectedTags) {
+                        JSONObject tagData = new JSONObject();
+                        tagData.put("tag_id", tag.getTagId());
+                        tags.put(tagData);
+                    }
+                    data.put("tags", tags);
                 }
-                data.put("tags", tags);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            String url = (0 == viewPager.getCurrentItem()) ? Sync.ADD_EXP_URL : Sync.ADD_INC_URL;
+
+            JsonObjectRequest request = new JsonObjectRequest(url, data, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    dialog.dismiss();
+                    Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    AddActivity.this.finish();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    dialog.dismiss();
+                }
+            });
+
+            AppData.getWebRequestInstance().getRequestQueue().add(request);
+        } else {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(AddActivity.this);
+            dialog.setCancelable(true);
+            dialog.setTitle("Error!!");
+            dialog.setMessage("Fill in all details");
+            dialog.show();
         }
-        String url = (0 == viewPager.getCurrentItem()) ? Sync.ADD_EXP_URL : Sync.ADD_INC_URL;
-
-        JsonObjectRequest request = new JsonObjectRequest(url, data, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                dialog.dismiss();
-                Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                startActivity(intent);
-                AddActivity.this.finish();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                dialog.dismiss();
-            }
-        });
-
-        AppData.getWebRequestInstance().getRequestQueue().add(request);
 
     }
 
